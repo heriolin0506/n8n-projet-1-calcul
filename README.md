@@ -22,5 +22,5 @@ Les petites entreprises perdent un temps considérable à faire des calculs manu
   - Input : 2 articles (Total brut : 3 100 000 Ar).
   - Output : Application de la remise de 155 000 Ar. Le workflow oriente correctement vers la branche "Client VIP".
 
-## 📸 Aperçu du Workflow
-*(N'oublie pas de glisser-déposer tes captures d'écran ici dans GitHub)*
+📸 Aperçu du Workflow
+(N'oublie pas de glisser-déposer tes captures d'écran ici dans GitHub)
