@@ -1,0 +1,195 @@
+{
+  "name": "PROJET_01_CALCUL_AUTOMATIQUE",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        -16
+      ],
+      "id": "ecec65c4-6894-4720-99c0-42a94c3ca393",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"client\": \"Rakoto\",\n  \"items\": [\n    { \"nom\": \"Laptop\", \"prix\": 3000000, \"qty\": 1 },\n    { \"nom\": \"Souris\", \"prix\": 50000, \"qty\": 2 }\n  ],\n  \"taux_tva\": 0.20\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -192,
+        -16
+      ],
+      "id": "360b7373-e351-4ec4-bf54-6c2f6850896b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst items = data.items;\nconst tvaRate = data.taux_tva;\n\nconst subTotal = items.reduce((acc, item) => acc + (item.prix * item.qty), 0);\nconst montantTVA = subTotal * tvaRate;\n\nlet remise = 0;\nif (subTotal > 3000000) {\n    remise = subTotal * 0.05;\n}\n\nconst totalFinal = subTotal + montantTVA - remise;\nconst formateur = new Intl.NumberFormat('fr-MG', { style: 'currency', currency: 'MGA' });\n\nreturn [{\n  json: {\n    client: data.client,\n    sub_total: formateur.format(subTotal),\n    tva: formateur.format(montantTVA),\n    remise: formateur.format(remise),\n    total_a_payer: formateur.format(totalFinal)\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        32,
+        -16
+      ],
+      "id": "6d5fc3fd-345b-406a-8aeb-437b4ceddf92",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "6e71fe03-a11f-4189-8d93-a9efc305743d",
+              "leftValue": "={{ $json.remise }} ",
+              "rightValue": "0 Ar",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        256,
+        -16
+      ],
+      "id": "41ae3247-9964-4f0b-9ca7-8d7dcbf662f0",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d28957cd-ada1-4a67-ac91-f56b1cfe8a5e",
+              "name": "Statut_Client",
+              "value": "Client VIP - Nahazo Remise",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        480,
+        -112
+      ],
+      "id": "d28626d6-f58c-4aaf-9416-a834e03492bb",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b85af0eb-bdbd-4fa8-ba85-d955d74f4e44",
+              "name": "Statut_Client",
+              "value": "Client Normal",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        480,
+        80
+      ],
+      "id": "6325fe8e-421b-45b5-91cc-98cace9f1850",
+      "name": "Edit Fields2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "timezone": "Indian/Antananarivo",
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "availableInMCP": false,
+    "redactCallerExecutions": true
+  },
+  "versionId": "d65f039d-572a-4a35-98d9-12f7365203a6",
+  "meta": {
+    "instanceId": "0a89e54057f9cd281dc46d0d08f7beb8669d266fd63edcb9da9f8084f3baefc4"
+  },
+  "nodeGroups": [],
+  "id": "aHvjt9wpx7cW04HP",
+  "tags": []
+}
